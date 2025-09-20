@@ -3,32 +3,49 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
 
 const Index: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [kpdValue, setKpdValue] = useState(87.3);
-  const [temperature, setTemperature] = useState(425);
-  const [pressure, setPressure] = useState(18.5);
-  const [fuelConsumption, setFuelConsumption] = useState(145.8);
+  const [kpdValue, setKpdValue] = useState(89.2);
+  const [fuelEcon, setFuelEcon] = useState(91.5);
+  const [fuelUse, setFuelUse] = useState(87.3);
+  const [heatUse, setHeatUse] = useState(93.1);
+  const [secondaryFuel, setSecondaryFuel] = useState(15.8);
+  const [waterUse, setWaterUse] = useState(2.4);
+  const [kit, setKit] = useState(88.7);
+  const [specificGeneration, setSpecificGeneration] = useState(156.2);
 
+  // Симуляция реального времени и изменения данных
   useEffect(() => {
-    const timer = setInterval(() => {
+    const interval = setInterval(() => {
       setCurrentTime(new Date());
-      // Simulate real-time data updates
-      setKpdValue(prev => prev + (Math.random() - 0.5) * 0.2);
-      setTemperature(prev => prev + (Math.random() - 0.5) * 2);
-      setPressure(prev => prev + (Math.random() - 0.5) * 0.1);
-      setFuelConsumption(prev => prev + (Math.random() - 0.5) * 1);
+      
+      // Небольшие флуктуации показателей
+      setKpdValue(prev => Math.max(85, Math.min(95, prev + (Math.random() - 0.5) * 0.2)));
+      setFuelEcon(prev => Math.max(88, Math.min(95, prev + (Math.random() - 0.5) * 0.3)));
+      setFuelUse(prev => Math.max(82, Math.min(92, prev + (Math.random() - 0.5) * 0.25)));
+      setHeatUse(prev => Math.max(90, Math.min(98, prev + (Math.random() - 0.5) * 0.2)));
+      setSecondaryFuel(prev => Math.max(10, Math.min(25, prev + (Math.random() - 0.5) * 0.4)));
+      setWaterUse(prev => Math.max(2.0, Math.min(3.0, prev + (Math.random() - 0.5) * 0.05)));
+      setKit(prev => Math.max(84, Math.min(94, prev + (Math.random() - 0.5) * 0.3)));
+      setSpecificGeneration(prev => Math.max(140, Math.min(170, prev + (Math.random() - 0.5) * 1.0)));
     }, 2000);
 
-    return () => clearInterval(timer);
+    return () => clearInterval(interval);
   }, []);
 
-  const getStatusColor = (value: number, min: number, max: number) => {
-    if (value >= min && value <= max) return 'bg-green-500';
-    if (value > max * 1.1 || value < min * 0.9) return 'bg-red-500';
-    return 'bg-yellow-500';
+  const getStatusColor = (value: number, min: number, optimal: number) => {
+    if (value >= optimal) return 'text-green-400';
+    if (value >= min) return 'text-yellow-400';
+    return 'text-red-400';
+  };
+
+  const getStatusIcon = (value: number, min: number, optimal: number) => {
+    if (value >= optimal) return 'CheckCircle';
+    if (value >= min) return 'AlertTriangle';
+    return 'AlertCircle';
   };
 
   const formatTime = (date: Date) => {
@@ -39,302 +56,263 @@ const Index: React.FC = () => {
     });
   };
 
-  const navItems = [
-    { id: 'dashboard', label: 'Дашборд', icon: 'Monitor' },
-    { id: 'kpd', label: 'КПД', icon: 'Gauge' },
-    { id: 'fuel', label: 'Топливо', icon: 'Fuel' },
-    { id: 'heat', label: 'Тепло', icon: 'Thermometer' },
-    { id: 'water', label: 'Вода', icon: 'Droplets' },
-    { id: 'analytics', label: 'Аналитика', icon: 'BarChart' },
-    { id: 'alerts', label: 'Аварии', icon: 'AlertTriangle' },
-    { id: 'shift', label: 'Смена', icon: 'Clock' },
-  ];
-
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white font-mono">
       {/* Header */}
-      <header className="border-b border-border bg-card">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <Icon name="Factory" size={32} className="text-primary" />
+      <div className="border-b border-slate-700 bg-slate-900/80 backdrop-blur">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center">
+                <Icon name="Zap" size={24} className="text-white" />
+              </div>
               <div>
-                <h1 className="text-2xl font-bold text-primary">ТЭЦ-12</h1>
-                <p className="text-sm text-muted-foreground">Автоматизированное рабочее место</p>
+                <h1 className="text-2xl font-bold">АРМ НАЧАЛЬНИКА СМЕНЫ</h1>
+                <p className="text-slate-400 text-sm">ТЭЦ-12 • Автоматизированное рабочее место</p>
               </div>
             </div>
-          </div>
-          
-          <div className="flex items-center space-x-6">
             <div className="text-right">
-              <p className="text-sm text-muted-foreground">Смена начальника</p>
-              <p className="font-mono text-lg">{formatTime(currentTime)}</p>
+              <div className="text-lg font-semibold">{formatTime(currentTime)}</div>
+              <div className="text-sm text-slate-400">{currentTime.toLocaleDateString('ru-RU')}</div>
             </div>
-            <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500">
-              <Icon name="Circle" size={8} className="mr-2 fill-current" />
-              Система активна
-            </Badge>
           </div>
         </div>
-      </header>
+      </div>
 
-      <div className="flex">
-        {/* Sidebar Navigation */}
-        <nav className="w-64 border-r border-border bg-card h-[calc(100vh-80px)]">
-          <div className="p-4">
-            <Tabs defaultValue="dashboard" className="w-full">
-              <TabsList className="grid w-full grid-cols-1 h-auto p-1 bg-muted/20">
-                {navItems.map((item) => (
-                  <TabsTrigger
-                    key={item.id}
-                    value={item.id}
-                    className="justify-start p-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-                  >
-                    <Icon name={item.icon as any} size={16} className="mr-2" />
-                    {item.label}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
+      <div className="container mx-auto px-4 py-6 space-y-6">
+        {/* Основные показатели эффективности */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* КПД */}
+          <Card className="bg-slate-800/50 border-slate-700">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center">
+                <Icon name={getStatusIcon(kpdValue, 85, 90)} size={16} className={`mr-2 ${getStatusColor(kpdValue, 85, 90)}`} />
+                КПД станции
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className={`text-2xl font-bold ${getStatusColor(kpdValue, 85, 90)}`}>
+                {kpdValue.toFixed(1)}%
+              </div>
+              <p className="text-xs text-slate-400 mt-1">Норма: ≥90%</p>
+            </CardContent>
+          </Card>
 
-              {/* Dashboard Content */}
-              <TabsContent value="dashboard" className="mt-6 space-y-6">
-                <div className="grid grid-cols-1 gap-4">
-                  {/* KPD Card */}
-                  <Card className="bg-card/50 border-border">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="flex items-center justify-between text-sm">
-                        <span className="flex items-center">
-                          <Icon name="Gauge" size={16} className="mr-2 text-primary" />
-                          КПД
-                        </span>
-                        <div className={`w-3 h-3 rounded-full ${getStatusColor(kpdValue, 85, 90)}`} />
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-3xl font-mono font-bold text-primary mb-2">
-                        {kpdValue.toFixed(1)}%
-                      </div>
-                      <Progress value={kpdValue} className="h-2" />
-                      <p className="text-xs text-muted-foreground mt-2">
-                        Норма: 85-90%
-                      </p>
-                    </CardContent>
-                  </Card>
+          {/* Топливоэкономия */}
+          <Card className="bg-slate-800/50 border-slate-700">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center">
+                <Icon name={getStatusIcon(fuelEcon, 88, 92)} size={16} className={`mr-2 ${getStatusColor(fuelEcon, 88, 92)}`} />
+                Топливоэкономия
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className={`text-2xl font-bold ${getStatusColor(fuelEcon, 88, 92)}`}>
+                {fuelEcon.toFixed(1)}%
+              </div>
+              <p className="text-xs text-slate-400 mt-1">Норма: ≥92%</p>
+            </CardContent>
+          </Card>
 
-                  {/* Temperature Card */}
-                  <Card className="bg-card/50 border-border">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="flex items-center justify-between text-sm">
-                        <span className="flex items-center">
-                          <Icon name="Thermometer" size={16} className="mr-2 text-accent" />
-                          Температура
-                        </span>
-                        <div className={`w-3 h-3 rounded-full ${getStatusColor(temperature, 420, 450)}`} />
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-3xl font-mono font-bold text-accent mb-2">
-                        {temperature.toFixed(0)}°C
-                      </div>
-                      <Progress value={(temperature / 500) * 100} className="h-2" />
-                      <p className="text-xs text-muted-foreground mt-2">
-                        Рабочий диапазон: 420-450°C
-                      </p>
-                    </CardContent>
-                  </Card>
+          {/* Коэффициент использования топлива */}
+          <Card className="bg-slate-800/50 border-slate-700">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center">
+                <Icon name={getStatusIcon(fuelUse, 82, 88)} size={16} className={`mr-2 ${getStatusColor(fuelUse, 82, 88)}`} />
+                Использование топлива
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className={`text-2xl font-bold ${getStatusColor(fuelUse, 82, 88)}`}>
+                {fuelUse.toFixed(1)}%
+              </div>
+              <p className="text-xs text-slate-400 mt-1">Норма: ≥88%</p>
+            </CardContent>
+          </Card>
 
-                  {/* Pressure Card */}
-                  <Card className="bg-card/50 border-border">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="flex items-center justify-between text-sm">
-                        <span className="flex items-center">
-                          <Icon name="Gauge" size={16} className="mr-2 text-blue-400" />
-                          Давление
-                        </span>
-                        <div className={`w-3 h-3 rounded-full ${getStatusColor(pressure, 18, 20)}`} />
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-3xl font-mono font-bold text-blue-400 mb-2">
-                        {pressure.toFixed(1)} МПа
-                      </div>
-                      <Progress value={(pressure / 25) * 100} className="h-2" />
-                      <p className="text-xs text-muted-foreground mt-2">
-                        Норма: 18-20 МПа
-                      </p>
-                    </CardContent>
-                  </Card>
+          {/* Коэффициент использования тепла */}
+          <Card className="bg-slate-800/50 border-slate-700">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center">
+                <Icon name={getStatusIcon(heatUse, 90, 95)} size={16} className={`mr-2 ${getStatusColor(heatUse, 90, 95)}`} />
+                Использование тепла
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className={`text-2xl font-bold ${getStatusColor(heatUse, 90, 95)}`}>
+                {heatUse.toFixed(1)}%
+              </div>
+              <p className="text-xs text-slate-400 mt-1">Норма: ≥95%</p>
+            </CardContent>
+          </Card>
+        </div>
 
-                  {/* Fuel Consumption Card */}
-                  <Card className="bg-card/50 border-border">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="flex items-center justify-between text-sm">
-                        <span className="flex items-center">
-                          <Icon name="Fuel" size={16} className="mr-2 text-orange-400" />
-                          Расход топлива
-                        </span>
-                        <div className={`w-3 h-3 rounded-full ${getStatusColor(fuelConsumption, 140, 160)}`} />
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-3xl font-mono font-bold text-orange-400 mb-2">
-                        {fuelConsumption.toFixed(1)} т/ч
-                      </div>
-                      <Progress value={(fuelConsumption / 200) * 100} className="h-2" />
-                      <p className="text-xs text-muted-foreground mt-2">
-                        Плановый: 140-160 т/ч
-                      </p>
-                    </CardContent>
-                  </Card>
+        {/* Дополнительные коэффициенты */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Вторичное топливо */}
+          <Card className="bg-slate-800/50 border-slate-700">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center">
+                <Icon name={getStatusIcon(secondaryFuel, 12, 18)} size={16} className={`mr-2 ${getStatusColor(secondaryFuel, 12, 18)}`} />
+                Вторичное топливо
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className={`text-2xl font-bold ${getStatusColor(secondaryFuel, 12, 18)}`}>
+                {secondaryFuel.toFixed(1)}%
+              </div>
+              <p className="text-xs text-slate-400 mt-1">Целевое: 15-20%</p>
+            </CardContent>
+          </Card>
+
+          {/* Использование воды */}
+          <Card className="bg-slate-800/50 border-slate-700">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center">
+                <Icon name={getStatusIcon(3.5 - waterUse, 0.5, 1.0)} size={16} className={`mr-2 ${waterUse <= 2.5 ? 'text-green-400' : waterUse <= 2.8 ? 'text-yellow-400' : 'text-red-400'}`} />
+                Использование воды
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className={`text-2xl font-bold ${waterUse <= 2.5 ? 'text-green-400' : waterUse <= 2.8 ? 'text-yellow-400' : 'text-red-400'}`}>
+                {waterUse.toFixed(2)}
+              </div>
+              <p className="text-xs text-slate-400 mt-1">м³/МВт·ч (≤2.5)</p>
+            </CardContent>
+          </Card>
+
+          {/* КИТ */}
+          <Card className="bg-slate-800/50 border-slate-700">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center">
+                <Icon name={getStatusIcon(kit, 84, 90)} size={16} className={`mr-2 ${getStatusColor(kit, 84, 90)}`} />
+                КИТ
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className={`text-2xl font-bold ${getStatusColor(kit, 84, 90)}`}>
+                {kit.toFixed(1)}%
+              </div>
+              <p className="text-xs text-slate-400 mt-1">Норма: ≥90%</p>
+            </CardContent>
+          </Card>
+
+          {/* Удельная выработка */}
+          <Card className="bg-slate-800/50 border-slate-700">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center">
+                <Icon name={getStatusIcon(specificGeneration, 140, 160)} size={16} className={`mr-2 ${getStatusColor(specificGeneration, 140, 160)}`} />
+                Удельная выработка
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className={`text-2xl font-bold ${getStatusColor(specificGeneration, 140, 160)}`}>
+                {specificGeneration.toFixed(1)}
+              </div>
+              <p className="text-xs text-slate-400 mt-1">кВт·ч/ГДж (≥160)</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Графики и детальная информация */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* График КПД за смену */}
+          <Card className="bg-slate-800/50 border-slate-700">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Icon name="TrendingUp" size={16} className="mr-2 text-orange-400" />
+                Динамика КПД за смену
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-40 bg-slate-900/50 rounded relative overflow-hidden">
+                <div className="absolute inset-0 flex items-end justify-between px-2 pb-2">
+                  {[87.2, 88.1, 89.3, 89.8, 88.9, 89.5, 90.1, 89.7, 89.2, 88.8, 89.4, 89.2].map((value, index) => (
+                    <div
+                      key={index}
+                      className="bg-gradient-to-t from-orange-500 to-orange-300 w-3 rounded-t transition-all duration-500"
+                      style={{ height: `${((value - 85) / 10) * 100}%` }}
+                    />
+                  ))}
                 </div>
-              </TabsContent>
+                <div className="absolute top-2 left-2 text-xs text-orange-400 font-semibold">
+                  Текущий: {kpdValue.toFixed(1)}%
+                </div>
+                <div className="absolute bottom-2 right-2 text-xs text-slate-400">
+                  08:00 - 20:00
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-              {/* Other tabs content - placeholder */}
-              {navItems.slice(1).map((item) => (
-                <TabsContent key={item.id} value={item.id} className="mt-6">
-                  <Card className="bg-card/50 border-border">
-                    <CardHeader>
-                      <CardTitle className="flex items-center">
-                        <Icon name={item.icon as any} size={20} className="mr-2 text-primary" />
-                        {item.label}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-muted-foreground">
-                        Раздел "{item.label}" в разработке. Здесь будут отображаться 
-                        детальные показатели и управление системами.
-                      </p>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
+          {/* Системные предупреждения */}
+          <Card className="bg-slate-800/50 border-slate-700">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Icon name="AlertTriangle" size={16} className="mr-2 text-yellow-400" />
+                Системные уведомления
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="flex items-center p-2 bg-yellow-400/10 rounded border-l-2 border-yellow-400">
+                  <Icon name="AlertTriangle" size={14} className="text-yellow-400 mr-2" />
+                  <div className="text-xs">
+                    <div className="font-semibold">Превышение расхода воды</div>
+                    <div className="text-slate-400">Блок №2 • {formatTime(currentTime)}</div>
+                  </div>
+                </div>
+                <div className="flex items-center p-2 bg-green-400/10 rounded border-l-2 border-green-400">
+                  <Icon name="CheckCircle" size={14} className="text-green-400 mr-2" />
+                  <div className="text-xs">
+                    <div className="font-semibold">КПД в норме</div>
+                    <div className="text-slate-400">Все блоки • {formatTime(currentTime)}</div>
+                  </div>
+                </div>
+                <div className="flex items-center p-2 bg-blue-400/10 rounded border-l-2 border-blue-400">
+                  <Icon name="Info" size={14} className="text-blue-400 mr-2" />
+                  <div className="text-xs">
+                    <div className="font-semibold">Плановый ремонт</div>
+                    <div className="text-slate-400">Блок №1 • 22:00-06:00</div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Быстрые действия */}
+        <Card className="bg-slate-800/50 border-slate-700">
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Icon name="Settings" size={16} className="mr-2 text-slate-400" />
+              Управление станцией
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
+              {[
+                { icon: 'Activity', label: 'Блоки', color: 'bg-blue-600' },
+                { icon: 'Thermometer', label: 'Теплосеть', color: 'bg-red-600' },
+                { icon: 'Fuel', label: 'Топливо', color: 'bg-orange-600' },
+                { icon: 'Droplets', label: 'Водоподготовка', color: 'bg-cyan-600' },
+                { icon: 'Gauge', label: 'Турбины', color: 'bg-green-600' },
+                { icon: 'Zap', label: 'Электросеть', color: 'bg-yellow-600' },
+                { icon: 'Shield', label: 'Безопасность', color: 'bg-purple-600' },
+                { icon: 'BarChart3', label: 'Отчёты', color: 'bg-slate-600' }
+              ].map((item, index) => (
+                <Button
+                  key={index}
+                  variant="outline"
+                  className={`${item.color} border-0 text-white hover:scale-105 transition-transform flex flex-col items-center p-4 h-16`}
+                >
+                  <Icon name={item.icon as any} size={20} />
+                  <span className="text-xs mt-1">{item.label}</span>
+                </Button>
               ))}
-            </Tabs>
-          </div>
-        </nav>
-
-        {/* Main Content Area */}
-        <main className="flex-1 p-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {/* System Status Overview */}
-            <Card className="col-span-full bg-card/50 border-border">
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Icon name="Activity" size={20} className="mr-2 text-primary" />
-                  Общее состояние системы
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-green-400">12</div>
-                    <p className="text-xs text-muted-foreground">Системы в норме</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-yellow-400">3</div>
-                    <p className="text-xs text-muted-foreground">Предупреждения</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-red-400">0</div>
-                    <p className="text-xs text-muted-foreground">Критические</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-primary">98.7%</div>
-                    <p className="text-xs text-muted-foreground">Общий КПД</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Recent Alerts */}
-            <Card className="bg-card/50 border-border">
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Icon name="Bell" size={16} className="mr-2 text-yellow-400" />
-                  Последние события
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 rounded-full bg-yellow-400 mt-2" />
-                  <div>
-                    <p className="text-sm">Превышение температуры в котле №2</p>
-                    <p className="text-xs text-muted-foreground">15:42</p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 rounded-full bg-green-400 mt-2" />
-                  <div>
-                    <p className="text-sm">Система охлаждения восстановлена</p>
-                    <p className="text-xs text-muted-foreground">14:18</p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 rounded-full bg-blue-400 mt-2" />
-                  <div>
-                    <p className="text-sm">Запуск генератора №3</p>
-                    <p className="text-xs text-muted-foreground">13:55</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Performance Chart Placeholder */}
-            <Card className="bg-card/50 border-border">
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Icon name="TrendingUp" size={16} className="mr-2 text-primary" />
-                  График производительности
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="h-32 bg-muted/10 rounded relative overflow-hidden">
-                  <div className="absolute inset-0 flex items-end justify-between px-2 pb-2">
-                    {[85, 87, 88, 89, 87, 86, 88, 89, 90, 91, 89, 87].map((value, index) => (
-                      <div
-                        key={index}
-                        className="bg-primary/70 w-2 rounded-t transition-all duration-300"
-                        style={{ height: `${(value / 100) * 100}%` }}
-                      />
-                    ))}
-                  </div>
-                  <div className="absolute top-2 left-2 text-xs text-primary font-mono">
-                    КПД: {kpdValue.toFixed(1)}%
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Shift Information */}
-            <Card className="bg-card/50 border-border">
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Icon name="Users" size={16} className="mr-2 text-primary" />
-                  Информация о смене
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Начальник смены:</span>
-                  <span className="text-sm font-medium">Иванов А.П.</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Смена:</span>
-                  <span className="text-sm font-medium">Дневная (08:00-20:00)</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Персонал:</span>
-                  <span className="text-sm font-medium">15 человек</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Статус:</span>
-                  <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500">
-                    Активная
-                  </Badge>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </main>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
